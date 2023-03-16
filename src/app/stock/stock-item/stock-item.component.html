@@ -1,0 +1,77 @@
+<h1><b>Stock Market App</b></h1>
+    
+<div class="stock-container" *ngIf="stockList.length > 0" >
+    <div class="stock-item" *ngFor="let stock of stockList">
+        <div class="name">
+            <h3>{{stock.name}}</h3> - <h4>({{stock.code}})</h4>
+        </div>
+        <div class="price" 
+            [class]="stock.isPositiveChange() ? 'positive' : 'negative'">$ {{stock.price}}</div>
+        <button (click)="toggleFavorite($event)" [disabled]="stock.favorite">Add to favorite</button>
+    </div>
+</div>
+<main>
+    <h2>Create Stock Form</h2>
+    <form #form="ngForm" (ngSubmit)="createStock(form)">
+        <div class="stock-name">
+            <p>The following changes from green to red when it is invail</p>
+            <input type="text"
+             id="stock-name"
+              placeholder="Stock Name" 
+              name ="stockName" 
+            [(ngModel)]="stock.name" required #stockName="ngModel"/>
+            <div *ngIf="stockName.errors && stockName.errors"required>
+                Stock Name is Mandatory
+            </div>
+        </div>
+        <div class ="stock-code">
+            <p>The following element changes from green to red when it has been modified</p>
+            <input type="text" 
+            id="stock-price" 
+            placeholder="Stock Code" 
+            name ="stockCode" 
+            [(ngModel)]="stock.code" required minlength="2" #stockCode="ngModel"/>
+            <div *ngIf="stockCode.dirty && stockCode.invalid">
+                <div *ngIf="stockCode.errors" required>
+                    Stock Code is Mandatory
+                </div>
+                <div *ngIf="checkLenght()">
+                    Stock Code must be atleast of length 2
+                </div>
+            </div>
+        </div>
+        <div class ="stock-price">
+            <p>The following element changes from green to red when it is visited by the user</p>
+            <input type="number" 
+            id="stock-visited" 
+            placeholder="Stock Price" 
+            name ="stockPrice" 
+            [ngModel]="stock.price" 
+            (ngModelChange)="setStockPrice($event)"
+            required #stockPrice="ngModel"/><br><br>
+            <div *ngIf="stockPrice.dirty && stockPrice.invalid">
+                <div *ngIf="stockPrice.errors">
+                    Stock Code is Mandatory
+                </div>
+                
+            </div>
+        </div>
+
+        <select name="stockChange" [(ngModel)]="stock.exChange">
+            <option *ngFor="let exchange of exchanges" [ngValue]="exchange">{{exchange}}</option>
+        </select>
+            
+        <div class="stock-confirm">
+            <label>
+                <input type="checkbox" name="stockConfirm"  [(ngModel)] ="confirmed"/>
+                I confirm that the information provied above is accurate!
+            </label>
+        </div>
+        <button [disabled]="!confirmed" type="submit" >Create</button>
+        
+    </form>
+    
+
+    <h4>Stock Name is {{stock | json}}</h4>
+    <h4>Data has been confirmed: {{confirmed}}</h4>
+</main>
